@@ -16,7 +16,7 @@
 
 #define CGROUP_FS "/sys/fs/cgroup"
 
-void NONRET __attribute__((format(printf,1,2)))
+void NONRET __attribute__((format(printf, 1, 2)))
 die(char *msg, ...)
 {
   va_list args;
@@ -26,7 +26,7 @@ die(char *msg, ...)
   exit(1);
 }
 
-static void __attribute__((format(printf,3,4)))
+static void __attribute__((format(printf, 3, 4)))
 write_cg_attr(const char *cg_root, const char *name, const char *fmt, ...)
 {
   va_list args;
@@ -78,15 +78,15 @@ get_my_cgroup(void)
   char *cg = NULL;
 
   while ((len = getline(&line, &buflen, f)) >= 0)
+  {
+    if (len > 0 && line[len - 1] == '\n')
+      line[--len] = 0;
+    if (line[0] == '0' && line[1] == ':' && line[2] == ':')
     {
-      if (len > 0 && line[len-1] == '\n')
-	line[--len] = 0;
-      if (line[0] == '0' && line[1] == ':' && line[2] == ':')
-	{
-	  cg = xsprintf(CGROUP_FS "%s", line + 3);
-	  break;
-	}
+      cg = xsprintf(CGROUP_FS "%s", line + 3);
+      break;
     }
+  }
 
   if (!cg)
     die("Cannot find my own cgroup");
@@ -113,11 +113,11 @@ setup_cg(void)
 {
   char *cg = cf_cg_root;
   if (strlen(cf_cg_root) > 5 && !memcmp(cf_cg_root, "auto:", 5))
-    {
-      check_cgroup_fs();
-      cg = get_my_cgroup();
-      write_auto_cgroup(cf_cg_root + 5, cg);
-    }
+  {
+    check_cgroup_fs();
+    cg = get_my_cgroup();
+    write_auto_cgroup(cf_cg_root + 5, cg);
+  }
 
   struct stat st;
   if (stat(cg, &st), 0)
@@ -128,12 +128,11 @@ setup_cg(void)
   if (mkdir(subgroup, 0777) < 0)
     die("Cannot create subgroup %s: %m", subgroup);
 
-  write_cg_attr(cg, "daemon/cgroup.procs", "%d\n", (int) getpid());
+  write_cg_attr(cg, "daemon/cgroup.procs", "%d\n", (int)getpid());
   write_cg_attr(cg, "cgroup.subtree_control", "+cpuset +memory\n");
 }
 
-int
-main(int argc UNUSED, char **argv UNUSED)
+int main(int argc UNUSED, char **argv UNUSED)
 {
   cf_parse();
   setup_cg();

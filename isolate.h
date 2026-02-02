@@ -13,13 +13,13 @@
 
 #define NONRET __attribute__((noreturn))
 #define UNUSED __attribute__((unused))
-#define ARRAY_SIZE(a) (int)(sizeof(a)/sizeof(a[0]))
+#define ARRAY_SIZE(a) (int)(sizeof(a) / sizeof(a[0]))
 
 /* isolate.c */
 
-void NONRET __attribute__((format(printf,1,2))) die(char *msg, ...);
-void NONRET __attribute__((format(printf,1,2))) err(char *msg, ...);
-void __attribute__((format(printf,1,2))) msg(char *msg, ...);
+void NONRET __attribute__((format(printf, 1, 2))) die(char *msg, ...);
+void NONRET __attribute__((format(printf, 1, 2))) err(char *msg, ...);
+void __attribute__((format(printf, 1, 2))) msg(char *msg, ...);
 
 extern int pass_environ;
 extern int verbose;
@@ -36,7 +36,7 @@ extern gid_t box_gid, orig_gid;
 
 void *xmalloc(size_t size);
 char *xstrdup(char *str);
-char * __attribute__((format(printf,1,2))) xsprintf(const char *fmt, ...);
+char *__attribute__((format(printf, 1, 2))) xsprintf(const char *fmt, ...);
 
 void timespec_sub(const struct timespec *a, const struct timespec *b, struct timespec *result);
 
@@ -50,7 +50,7 @@ void close_all_fds(void);
 
 void meta_open(const char *name);
 void meta_close(void);
-void __attribute__((format(printf,1,2))) meta_printf(const char *fmt, ...);
+void __attribute__((format(printf, 1, 2))) meta_printf(const char *fmt, ...);
 
 /* rules.c */
 
@@ -94,7 +94,8 @@ extern int cf_first_gid;
 extern int cf_num_boxes;
 extern int cf_restricted_init;
 
-struct cf_per_box {
+struct cf_per_box
+{
   struct cf_per_box *next;
   int box_id;
   char *cpus;
